@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBank", "AppBank\AppBank.csproj", "{C24CC411-9AFC-4978-AFF6-EBC678055A5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppBank.Models", "AppBank.Models\AppBank.Models.csproj", "{9B51C4D3-41DF-4456-A814-30D7C93E5A70}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C24CC411-9AFC-4978-AFF6-EBC678055A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C24CC411-9AFC-4978-AFF6-EBC678055A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C24CC411-9AFC-4978-AFF6-EBC678055A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C24CC411-9AFC-4978-AFF6-EBC678055A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B51C4D3-41DF-4456-A814-30D7C93E5A70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B51C4D3-41DF-4456-A814-30D7C93E5A70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B51C4D3-41DF-4456-A814-30D7C93E5A70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B51C4D3-41DF-4456-A814-30D7C93E5A70}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BA85912-42AA-4079-9A35-417441F11609}
+	EndGlobalSection
+EndGlobal
