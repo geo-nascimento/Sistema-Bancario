@@ -4,15 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+
 
 
 //Conterá operações de: cadastrar usuários e seus contatos
 namespace AppBank.Repositories
 {
-    internal class UserRepository : IUserReporitory
+    public class UserRepository : IUserReporitory
     {
-        private readonly IDbConnection _connection;
+        private IDbConnection _connection;
 
         public UserRepository()
         {
@@ -20,14 +20,13 @@ namespace AppBank.Repositories
         }
 
         public void CreateUser(User user)
-        {   
-            _connection.Open();
-            SqlTransaction transaction = (SqlTransaction) _connection.BeginTransaction();
+        {
+            
+           
             try
             {   //Dados de usuario
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "INSERT INTO User (Name, Email, CPF, DataCadastro) VALUES (@Name, @Email, @CPF, @DataCadastro); SELECT CAST(scope_identity() AS int)";
-                cmd.Transaction = transaction;
+                cmd.CommandText = "INSERT INTO Users (Name, Email, CPF, DataCadastro) VALUES (@Name, @Email, @CPF, @DataCadastro); SELECT CAST(scope_identity() AS int)";
                 cmd.Connection = (SqlConnection)_connection;
 
                 cmd.Parameters.AddWithValue("@Name", user.Name);
@@ -35,12 +34,14 @@ namespace AppBank.Repositories
                 cmd.Parameters.AddWithValue("@CPF", user.CPF);
                 cmd.Parameters.AddWithValue("@DataCadastro", DateTimeOffset.Now);
 
+                _connection.Open();
+
                 user.UserId = (int) cmd.ExecuteScalar();//Retorna o id inserido no usuário pelo banco
 
                 //Dados de contato
                 cmd = new SqlCommand();
                 cmd.CommandText = "INSERT INTO Contacts (UserId, Telefone, Celular) VALUES (@UserId, @Telefone, @Celular)";
-                cmd.Transaction = transaction;
+               
                 cmd.Connection = (SqlConnection)_connection;
 
                 cmd.Parameters.AddWithValue("@UserId", user.UserId);
@@ -49,18 +50,7 @@ namespace AppBank.Repositories
 
                 cmd.ExecuteNonQuery();
 
-                transaction.Commit();
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Ocorreu um erro na entrada de dados");
-                }
+                
             }
             finally
             {
@@ -150,15 +140,12 @@ namespace AppBank.Repositories
 
         public void UpdateUser(User user)
         {
-            _connection.Open();
-            SqlTransaction transaction = (SqlTransaction)_connection.BeginTransaction();
             try
             {
                 //Usuario
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "UPDATE User SET Name = @Name, Email = @Email, CPF = @CPF WHERE UserId = @id" ;
+                cmd.CommandText = "UPDATE Users SET Name = @Name, Email = @Email, CPF = @CPF WHERE UserId = @id" ;
                 cmd.Connection = (SqlConnection) _connection;
-                cmd.Transaction = transaction;
 
                 cmd.Parameters.AddWithValue("@Name", user.Name);
                 cmd.Parameters.AddWithValue("@Email", user.Email);
@@ -166,13 +153,13 @@ namespace AppBank.Repositories
 
                 cmd.Parameters.AddWithValue("@id", user.UserId);
 
+                _connection.Open();
                 cmd.ExecuteNonQuery();
                 
                 //Contato
                 cmd = new SqlCommand();
                 cmd.CommandText = "UPDATE Contacts SET Telefone = @Telefone, Celular = @Celular WHERE UserId = @id";
                 cmd.Connection = (SqlConnection)_connection;
-                cmd.Transaction = transaction;
 
                 cmd.Parameters.AddWithValue("@Telefone", user.Contact!.Telephone);
                 cmd.Parameters.AddWithValue("@Celular", user.Contact.Telephone);
@@ -181,18 +168,6 @@ namespace AppBank.Repositories
 
                 cmd.ExecuteNonQuery();
 
-                transaction.Commit();
-            }
-            catch(Exception)
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch(Exception)
-                {
-                    throw new Exception("Erro ao atualizar o cadastro de usuário");
-                }
             }
             finally
             {

@@ -10,9 +10,9 @@ using System.Linq;
 //Conterá operações de: acesso a conta, saque, depósito, emprestimo, leitura de saldo
 namespace AppBank.Repositories
 {
-    internal class AccountRepository : IAccountRepository
+    public class AccountRepository : IAccountRepository
     {
-        private readonly IDbConnection _connection;
+        private IDbConnection _connection;
 
         public AccountRepository()
         {

@@ -1,38 +1,64 @@
 ﻿using AppBank.Models;
 using AppBank.Repositories;
+using AppBank.Controllers;
 
-UserRepository _usrDb = new UserRepository();
-AccountRepository _accDb = new AccountRepository();
+UserController usrControl = new UserController();
 
-User user = _accDb.GetUserAccounts(3);
 
-Console.WriteLine(user.UserId);
-Console.WriteLine(user.Name);
-Console.WriteLine(user.Email);
-Console.WriteLine(user.CPF);
+var users = usrControl.ListUsers();
 
-Console.WriteLine();
-foreach (var account in user.Accounts!)
+
+foreach (var user in users)
 {
-    Console.WriteLine("Id da conta: " + account.AccountId);
-    Console.WriteLine("Número da conta: " + account.AccountNumber);
-    Console.WriteLine("Tipo de conta: " + account.AccountType.ToString());
-    Console.WriteLine("Saldo: " + account.Balance);
-    Console.WriteLine();
-
-}
-
-Console.WriteLine();
-
-var users = _usrDb.GetUsers();
-
-foreach(var usr in users)
-{
-    Console.WriteLine("id: " + usr.UserId);
-    Console.WriteLine("Nome: " + usr.Name);
-    Console.WriteLine("E-mail: " + usr.Email);
-    Console.WriteLine("CPF: " + usr.CPF);
-    Console.WriteLine("Data de Cadastro: " + usr.RegistrationDate.ToString("dd/MM/yyyy HH:mm zzz"));
+    Console.WriteLine("Id: " + user.UserId);
+    Console.WriteLine("Nome: " + user.Name);
+    Console.WriteLine("Email: " + user.Email);
+    Console.WriteLine("CPF: " + user.CPF);
+    Console.WriteLine("Telefone: " + user.Contact!.Telephone);
+    Console.WriteLine("Celular: " + user.Contact.CellPhone);
     Console.WriteLine();
 }
+
+Console.Write("Qual usuário deseja atualizar? Informe o Id:");
+int id = int.Parse(Console.ReadLine()!);
+
+Console.Clear();
+
+var userToUpdate = usrControl.GetUser(id);
+
+Console.WriteLine("Usuario para atualizar");
+Console.WriteLine("Nome: " + userToUpdate.Name);
+Console.WriteLine("Email: "+ userToUpdate.Email);
+Console.WriteLine("CPF: " + userToUpdate.CPF);
+Console.WriteLine("Telefone: " + userToUpdate.Contact!.Telephone);
+Console.WriteLine("Celular: " + userToUpdate.Contact.CellPhone);
+
+
+Console.WriteLine();
+Console.WriteLine("Atualizar dados");
+Console.Write("Nome: ");
+string name = Console.ReadLine()!;
+Console.Write("Email: ");
+string email = Console.ReadLine()!;
+Console.Write("CPF: ");
+string cpf = Console.ReadLine()!;
+Console.Write("Telefone: ");
+string phone = Console.ReadLine()!;
+Console.Write("Celular: ");
+string cellPhone = Console.ReadLine()!;
+Console.WriteLine();
+usrControl.UpdateRegister(id, name, email, cpf, phone, cellPhone);
+
+var userAtual = usrControl.GetUser(id);
+Console.WriteLine("Dados atualizados");
+Console.Write("Nome: " + userToUpdate.Name);
+Console.Write("Email: " + userToUpdate.Email);
+Console.Write("CPF: " + userToUpdate.CPF);
+Console.Write("Telefone: " + userToUpdate.Contact!.Telephone);
+Console.Write("Celular: " + userToUpdate.Contact.CellPhone);
+
+
+//usrControl.RegistrationUser("Douglas Souza", "mana.douglas@gmail.com", "081.024.420-04", "(11) 99931-3409","(11) 98831-3855");
+
+
 
