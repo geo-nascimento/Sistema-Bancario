@@ -3,9 +3,7 @@ using AppBank.Repositories;
 using AppBank.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+
 
 namespace AppBank.Controllers
 {
@@ -73,12 +71,4 @@ namespace AppBank.Controllers
         #endregion
     }
 
-    /*
-         * TODO:
-         * Realizar saque
-         * Realizar depósito
-         * Realizar empréstimo
-         * Exibir dados de usuário e suas contas
-         * Realizar transferências entre contas
-         */
 }

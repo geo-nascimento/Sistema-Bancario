@@ -144,12 +144,12 @@ namespace AppBank.Repositories
             {
                 //Usuario
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "UPDATE Users SET Name = @Name, Email = @Email, CPF = @CPF WHERE UserId = @id" ;
+                cmd.CommandText = "UPDATE Users SET Name = @Name, Email = @Email WHERE UserId = @id" ;
                 cmd.Connection = (SqlConnection) _connection;
 
                 cmd.Parameters.AddWithValue("@Name", user.Name);
                 cmd.Parameters.AddWithValue("@Email", user.Email);
-                cmd.Parameters.AddWithValue("@CPF", user.CPF);
+                
 
                 cmd.Parameters.AddWithValue("@id", user.UserId);
 

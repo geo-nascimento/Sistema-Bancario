@@ -57,36 +57,24 @@ namespace AppBank.Repositories
         #region Criação de conta
         public void CreateAccount(int id, Account account)
         {
-            _connection.Open();
-            SqlTransaction transaction = (SqlTransaction)_connection.BeginTransaction();
             try
             {
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = "INSERT INTO Account (UserId, AccountNumber, Password, Balance, AccounType, DataCadastro) VALUES (@UserId, @AccountNumber, @Password, @Balance, @AccounType, @DataCadastro)";
                 cmd.Connection = (SqlConnection)_connection;
-                cmd.Transaction = transaction;
-
+            
                 cmd.Parameters.AddWithValue("@UserId", id);
                 cmd.Parameters.AddWithValue("@AccountNumber", account.AccountNumber);
                 cmd.Parameters.AddWithValue("@Password", account.Password);
                 cmd.Parameters.AddWithValue("@Balance", 0.0M);
                 cmd.Parameters.AddWithValue("@AccounType", account.AccountType.ToString());
                 cmd.Parameters.AddWithValue("@DataCadastro", DateTimeOffset.Now);
-
+               
+                _connection.Open();
+                
                 cmd.ExecuteNonQuery();
 
-                transaction.Commit();
-            }
-            catch
-            {
-                try
-                {
-                    transaction.Rollback();
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Operação falhou");
-                }
+                
             }
             finally
             {
@@ -164,7 +152,7 @@ namespace AppBank.Repositories
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "SELECT Balance From Account WHERE UserId = @id";
+                cmd.CommandText = "SELECT Balance From Account WHERE AccountId = @id";
                 cmd.Connection = (SqlConnection)_connection;
                 cmd.Parameters.AddWithValue("@id", id);
 

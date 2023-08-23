@@ -47,15 +47,15 @@ string phone = Console.ReadLine()!;
 Console.Write("Celular: ");
 string cellPhone = Console.ReadLine()!;
 Console.WriteLine();
-usrControl.UpdateRegister(id, name, email, cpf, phone, cellPhone);
+usrControl.UpdateRegister(id, name, email, phone, cellPhone);
 
 var userAtual = usrControl.GetUser(id);
 Console.WriteLine("Dados atualizados");
-Console.Write("Nome: " + userToUpdate.Name);
-Console.Write("Email: " + userToUpdate.Email);
-Console.Write("CPF: " + userToUpdate.CPF);
-Console.Write("Telefone: " + userToUpdate.Contact!.Telephone);
-Console.Write("Celular: " + userToUpdate.Contact.CellPhone);
+Console.WriteLine("Nome: " + userToUpdate.Name);
+Console.WriteLine("Email: " + userToUpdate.Email);
+Console.WriteLine("CPF: " + userToUpdate.CPF);
+Console.WriteLine("Telefone: " + userToUpdate.Contact!.Telephone);
+Console.WriteLine("Celular: " + userToUpdate.Contact.CellPhone);
 
 
 //usrControl.RegistrationUser("Douglas Souza", "mana.douglas@gmail.com", "081.024.420-04", "(11) 99931-3409","(11) 98831-3855");
