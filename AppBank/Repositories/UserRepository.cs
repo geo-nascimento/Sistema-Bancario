@@ -26,11 +26,12 @@ namespace AppBank.Repositories
             try
             {   //Dados de usuario
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "INSERT INTO Users (Name, Email, CPF, DataCadastro) VALUES (@Name, @Email, @CPF, @DataCadastro); SELECT CAST(scope_identity() AS int)";
+                cmd.CommandText = "INSERT INTO Users (Name, Email, Password, CPF, DataCadastro) VALUES (@Name, @Email, @Password, @CPF, @DataCadastro); SELECT CAST(scope_identity() AS int)";
                 cmd.Connection = (SqlConnection)_connection;
 
                 cmd.Parameters.AddWithValue("@Name", user.Name);
                 cmd.Parameters.AddWithValue("@Email", user.Email);
+                cmd.Parameters.AddWithValue("@Password", user.Password);
                 cmd.Parameters.AddWithValue("@CPF", user.CPF);
                 cmd.Parameters.AddWithValue("@DataCadastro", DateTimeOffset.Now);
 
@@ -121,12 +122,12 @@ namespace AppBank.Repositories
                     user.Email = dataReader.GetString(2);
                     user.CPF = dataReader.GetString(3);
                     user.RegistrationDate = dataReader.GetDateTimeOffset(4);
-
+                    user.Password = dataReader.GetString(5);
                     
-                    contact.ContactId = dataReader.GetInt32(5);
-                    contact.UserId = dataReader.GetInt32(6);
-                    contact.Telephone = dataReader.GetString(7);
-                    contact.CellPhone = dataReader.GetString(8);
+                    contact.ContactId = dataReader.GetInt32(6);
+                    contact.UserId = dataReader.GetInt32(7);
+                    contact.Telephone = dataReader.GetString(8);
+                    contact.CellPhone = dataReader.GetString(9);
 
                     user.Contact = contact; 
                 }

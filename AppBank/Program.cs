@@ -1,64 +1,114 @@
-﻿using AppBank.Models;
-using AppBank.Repositories;
-using AppBank.Controllers;
+﻿using AppBank.Controllers;
+using System.Globalization;
+using AppBank.Services;
+using AppBank.Models.Enums;
+using AppBank.Models;
+using AppBank.ViewModels;
 
-UserController usrControl = new UserController();
+UserController _user = new UserController();
+AccountController _account = new AccountController();
+
+Menu();
 
 
-var users = usrControl.ListUsers();
 
 
-foreach (var user in users)
+
+void Menu()
 {
-    Console.WriteLine("Id: " + user.UserId);
-    Console.WriteLine("Nome: " + user.Name);
-    Console.WriteLine("Email: " + user.Email);
-    Console.WriteLine("CPF: " + user.CPF);
-    Console.WriteLine("Telefone: " + user.Contact!.Telephone);
-    Console.WriteLine("Celular: " + user.Contact.CellPhone);
-    Console.WriteLine();
+    Console.WriteLine("__Welcome to the Banking System__");
+    Console.WriteLine
+        (
+            "Which operation do you want to perform: \n"
+            + "1. Access user data\n"
+            + "2. Register a new user\n"
+            + "3. Close the application"
+        );
+    Console.Write("Option: ");
+    int option = int.Parse(Console.ReadLine()!);
+    Console.Clear();
+    Operations(option);
 }
 
-Console.Write("Qual usuário deseja atualizar? Informe o Id:");
-int id = int.Parse(Console.ReadLine()!);
+void Operations(int option)
+{
+    switch (option)
+    {
+        case 1://fazer a autenticação do usuário coletando os dados de email e senha
+            Console.WriteLine("__Login__");
+            try
+            {
+                Console.Write("Email: ");
+                string email = Console.ReadLine()!;
+                Console.Write("Password: ");
+                string password = Console.ReadLine()!;
+                
+                Console.Clear() ;
 
-Console.Clear();
+                int userId = _account.UserLogin(email, password);
 
-var userToUpdate = usrControl.GetUser(id);
+                var user = _account.GetAccountsInfo(userId);
 
-Console.WriteLine("Usuario para atualizar");
-Console.WriteLine("Nome: " + userToUpdate.Name);
-Console.WriteLine("Email: "+ userToUpdate.Email);
-Console.WriteLine("CPF: " + userToUpdate.CPF);
-Console.WriteLine("Telefone: " + userToUpdate.Contact!.Telephone);
-Console.WriteLine("Celular: " + userToUpdate.Contact.CellPhone);
+                Console.WriteLine(UserViewModel.UserData(user));
+                Console.WriteLine();
+                Console.WriteLine("Do you want to access an account? (1. Yes/2. No/3. Return to main menu)");
+                int response = int.Parse(Console.ReadLine()!);
+                
+                OperationAccount(response);
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine("Entrada de dados inválida");
+                Console.ReadKey();
+                Console.Clear();
+                Menu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine("Voltando para o menu inicial");
+                Console.ReadKey();
+                Console.Clear();
+                Menu();
+            }
+            break;
+        case 2:
+            Console.WriteLine("__Register a new user__");
 
+            break;
+        case 3:
+            Console.WriteLine("Closing the application");
+            Console.ReadKey();
+            Environment.Exit(0);
+            break;
+        default:
+            Console.WriteLine("Invalid Operation");
+            Console.Clear();
+            Menu();
+            break;
+    }
+}
 
-Console.WriteLine();
-Console.WriteLine("Atualizar dados");
-Console.Write("Nome: ");
-string name = Console.ReadLine()!;
-Console.Write("Email: ");
-string email = Console.ReadLine()!;
-Console.Write("CPF: ");
-string cpf = Console.ReadLine()!;
-Console.Write("Telefone: ");
-string phone = Console.ReadLine()!;
-Console.Write("Celular: ");
-string cellPhone = Console.ReadLine()!;
-Console.WriteLine();
-usrControl.UpdateRegister(id, name, email, phone, cellPhone);
+void OperationAccount(int response)
+{
+    switch (response)
+    {
+        case 1:
 
-var userAtual = usrControl.GetUser(id);
-Console.WriteLine("Dados atualizados");
-Console.WriteLine("Nome: " + userToUpdate.Name);
-Console.WriteLine("Email: " + userToUpdate.Email);
-Console.WriteLine("CPF: " + userToUpdate.CPF);
-Console.WriteLine("Telefone: " + userToUpdate.Contact!.Telephone);
-Console.WriteLine("Celular: " + userToUpdate.Contact.CellPhone);
+            break;
+        case 2:
 
+            break; 
+        
+        case 3:
 
-//usrControl.RegistrationUser("Douglas Souza", "mana.douglas@gmail.com", "081.024.420-04", "(11) 99931-3409","(11) 98831-3855");
+            break;
+
+        default:
+
+            break;
+    }
+}
 
 
 

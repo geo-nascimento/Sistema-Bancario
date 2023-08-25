@@ -3,6 +3,7 @@ using AppBank.Repositories;
 using AppBank.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 
 namespace AppBank.Controllers
@@ -18,8 +19,9 @@ namespace AppBank.Controllers
         }
 
         #region Cadastrar Usuário
-        public void RegistrationUser(string name, string email, string cpf, string telephone, string cellPhone)
+        public void RegistrationUser(string name, string email, string password, string cpf, string telephone, string cellPhone)
         {
+
             User user = new User() { Name = name, Email = email, CPF = cpf, RegistrationDate = DateTimeOffset.Now };
             Contact contact = new Contact() { Telephone = telephone, CellPhone = cellPhone };
 
@@ -28,7 +30,6 @@ namespace AppBank.Controllers
             _usrDb.CreateUser(user);
         }
         #endregion
-
         #region Listar usuários
         public List<User> ListUsers()
         {
@@ -40,7 +41,6 @@ namespace AppBank.Controllers
             return users;
         }
         #endregion
-
         #region Encontrar usuário por id
         public User GetUser(int id)
         {
@@ -52,7 +52,6 @@ namespace AppBank.Controllers
             return user;
         }
         #endregion
-
         #region Atualizar dados do usuário
         public void UpdateRegister(int id, string name, string email, string telephone, string cellPhone)
         {
@@ -69,6 +68,7 @@ namespace AppBank.Controllers
             _usrDb.UpdateUser(userToUpdate);
         }
         #endregion
+
     }
 
 }

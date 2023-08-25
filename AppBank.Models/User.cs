@@ -12,6 +12,7 @@ namespace AppBank.Models
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string CPF { get; set; } = null!;
+        public string Password { get; set; } = null!;
         public DateTimeOffset RegistrationDate { get; set; }
 
         //Relacionamentos

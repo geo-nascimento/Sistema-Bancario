@@ -20,33 +20,33 @@ namespace AppBank.Repositories
         }
 
         #region Autenticação
-        public bool Autentication(int id, string accountNumber, string password)
+        public int Autentication(string email, string password)
         {
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "SELECT AccountNumber, Password FROM Account WHERE AccountId = @id";
+                cmd.CommandText = "SELECT UserId FROM Users u WHERE u.Email = @Email AND u.Password = @Password";
                 cmd.Connection = (SqlConnection)_connection;
-                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Password", password);
 
                 _connection.Open();
 
                 SqlDataReader dataReader = cmd.ExecuteReader();
-                string accNumber = dataReader.GetString("AccountNumber");
-                string pass = dataReader.GetString("Password");
 
-
-                if (dataReader == null)
+                int userId = 0;
+                while (dataReader.Read())
                 {
-                    throw new Exception("Não foram encontrados dados referentes a consulta desejada");
+                    userId = dataReader.GetInt32("userId");
                 }
 
-                if (pass == password && accNumber == accountNumber)
+                if (dataReader != null)
                 {
-                    return true;
+                    return userId;
                 }
 
-                return false;
+                return 0;
+                
             }
             finally
             {
@@ -55,7 +55,7 @@ namespace AppBank.Repositories
         }
         #endregion
         #region Criação de conta
-        public void CreateAccount(int id, Account account)
+        public void CreateAccount(Account account)
         {
             try
             {
@@ -63,12 +63,12 @@ namespace AppBank.Repositories
                 cmd.CommandText = "INSERT INTO Account (UserId, AccountNumber, Password, Balance, AccounType, DataCadastro) VALUES (@UserId, @AccountNumber, @Password, @Balance, @AccounType, @DataCadastro)";
                 cmd.Connection = (SqlConnection)_connection;
             
-                cmd.Parameters.AddWithValue("@UserId", id);
+                cmd.Parameters.AddWithValue("@UserId", account.UserId);
                 cmd.Parameters.AddWithValue("@AccountNumber", account.AccountNumber);
                 cmd.Parameters.AddWithValue("@Password", account.Password);
                 cmd.Parameters.AddWithValue("@Balance", 0.0M);
                 cmd.Parameters.AddWithValue("@AccounType", account.AccountType.ToString());
-                cmd.Parameters.AddWithValue("@DataCadastro", DateTimeOffset.Now);
+                cmd.Parameters.AddWithValue("@DataCadastro", account.RegistrationDate);
                
                 _connection.Open();
                 
@@ -110,7 +110,7 @@ namespace AppBank.Repositories
                         user.Email = dataReader.GetString(2);
                         user.CPF = dataReader.GetString(3);
                         user.RegistrationDate = dataReader.GetDateTimeOffset(4);
-
+                        user.Password = dataReader.GetString(5);
                         userAccounts.Add(user.UserId, user);
                     }
                     else
@@ -119,13 +119,13 @@ namespace AppBank.Repositories
                     }
 
                     Account account = new Account();
-                    account.AccountId = dataReader.GetInt32(5);
-                    account.UserId = dataReader.GetInt32(6);
-                    account.AccountNumber = dataReader.GetString(7);
-                    account.Password = dataReader.GetString(8);
-                    account.Balance = dataReader.GetDecimal(9);
-                    account.AccountType = (AccountType)Enum.Parse(typeof(AccountType), dataReader.GetString(10));
-                    account.RegistrationDate = dataReader.GetDateTimeOffset(11);
+                    account.AccountId = dataReader.GetInt32(6);
+                    account.UserId = dataReader.GetInt32(7);
+                    account.AccountNumber = dataReader.GetString(8);
+                    account.Password = dataReader.GetString(9);
+                    account.Balance = dataReader.GetDecimal(10);
+                    account.AccountType = (AccountType)Enum.Parse(typeof(AccountType), dataReader.GetString(11));
+                    account.RegistrationDate = dataReader.GetDateTimeOffset(12);
 
                     //Verificação de segurança
                     user.Accounts = (user.Accounts == null) ? new List<Account>() : user.Accounts;
@@ -148,7 +148,7 @@ namespace AppBank.Repositories
         #region Tazer Saldo da conta
         public decimal GetBalance(int id)
         {
-            decimal balance;
+            decimal balance = 0.0M;
             try
             {
                 SqlCommand cmd = new SqlCommand();
@@ -160,7 +160,11 @@ namespace AppBank.Repositories
 
                 SqlDataReader dataReader = cmd.ExecuteReader();
 
-                balance = dataReader.GetDecimal(0);
+                while (dataReader.Read())
+                {
+                    balance = dataReader.GetDecimal("Balance");
+
+                }
 
             }
             finally
@@ -177,7 +181,7 @@ namespace AppBank.Repositories
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "UPDATE Account SET Balance = @mount WHERE AccountId = @id";
+                cmd.CommandText = "UPDATE Account SET Balance = @amount WHERE AccountId = @id";
                 cmd.Connection = (SqlConnection)_connection;
 
                 cmd.Parameters.AddWithValue("@amount", amount);
@@ -193,6 +197,23 @@ namespace AppBank.Repositories
             }
         }
         #endregion
+        
+        public void DeleteAccount(int accountId)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = "DELETE FROM Accounts WHERE AccountId = @id";
+                cmd.Parameters.AddWithValue("@id", accountId);
+                cmd.Connection = (SqlConnection) _connection;
 
+                _connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
     }
 }
