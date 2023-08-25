@@ -20,29 +20,29 @@ namespace AppBank.Repositories
         }
 
         #region Autenticação
-        public int Autentication(string email, string password)
+        public int AccountLoginAutentication(string accountNumber, string password)
         {
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "SELECT UserId FROM Users u WHERE u.Email = @Email AND u.Password = @Password";
+                cmd.CommandText = "SELECT AccountId FROM Account acc WHERE acc.AccountNumber = @AccountNumber AND acc.Password = @Password";
                 cmd.Connection = (SqlConnection)_connection;
-                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@AccountNumber", accountNumber);
                 cmd.Parameters.AddWithValue("@Password", password);
 
                 _connection.Open();
 
                 SqlDataReader dataReader = cmd.ExecuteReader();
 
-                int userId = 0;
+                int accountId = 0;
                 while (dataReader.Read())
                 {
-                    userId = dataReader.GetInt32("userId");
+                    accountId = dataReader.GetInt32("userId");
                 }
 
                 if (dataReader != null)
                 {
-                    return userId;
+                    return accountId;
                 }
 
                 return 0;
@@ -55,8 +55,9 @@ namespace AppBank.Repositories
         }
         #endregion
         #region Criação de conta
-        public void CreateAccount(Account account)
+        public int CreateAccount(Account account)
         {
+            int execution = 0;
             try
             {
                 SqlCommand cmd = new SqlCommand();
@@ -72,7 +73,7 @@ namespace AppBank.Repositories
                
                 _connection.Open();
                 
-                cmd.ExecuteNonQuery();
+                execution = cmd.ExecuteNonQuery();
 
                 
             }
@@ -80,15 +81,17 @@ namespace AppBank.Repositories
             {
                 _connection.Close();
             }
+
+            return execution;
         }
         #endregion
-        #region Trazer usuario e suas contas por id
-        public User GetUserAccounts(int id)
+        #region Trazer uma conta por id
+        public Account GetAccountById(int id)
         {
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "SELECT * FROM Users usr LEFT JOIN Account acc ON usr.UserId = acc.UserId WHERE usr.UserId = @id;";
+                cmd.CommandText = "SELECT * FROM Account WHERE AccountId = @id";
                 cmd.Connection = (SqlConnection)_connection;
 
                 cmd.Parameters.AddWithValue("@id", id);
@@ -97,46 +100,20 @@ namespace AppBank.Repositories
 
                 SqlDataReader dataReader = cmd.ExecuteReader();
 
-                Dictionary<int, User> userAccounts = new Dictionary<int, User>();
+                Account account = new Account();
 
                 while (dataReader.Read())
                 {
-                    User user = new User();
-
-                    if (!userAccounts.ContainsKey(dataReader.GetInt32(0)))
-                    {
-                        user.UserId = dataReader.GetInt32(0);
-                        user.Name = dataReader.GetString(1);
-                        user.Email = dataReader.GetString(2);
-                        user.CPF = dataReader.GetString(3);
-                        user.RegistrationDate = dataReader.GetDateTimeOffset(4);
-                        user.Password = dataReader.GetString(5);
-                        userAccounts.Add(user.UserId, user);
-                    }
-                    else
-                    {
-                        user = userAccounts[dataReader.GetInt32(0)];
-                    }
-
-                    Account account = new Account();
-                    account.AccountId = dataReader.GetInt32(6);
-                    account.UserId = dataReader.GetInt32(7);
-                    account.AccountNumber = dataReader.GetString(8);
-                    account.Password = dataReader.GetString(9);
-                    account.Balance = dataReader.GetDecimal(10);
-                    account.AccountType = (AccountType)Enum.Parse(typeof(AccountType), dataReader.GetString(11));
-                    account.RegistrationDate = dataReader.GetDateTimeOffset(12);
-
-                    //Verificação de segurança
-                    user.Accounts = (user.Accounts == null) ? new List<Account>() : user.Accounts;
-
-                    if(user.Accounts.FirstOrDefault(a => a.AccountId == account.AccountId) == null)
-                    {
-                        user.Accounts.Add(account);
-                    }
+                    account.AccountId = dataReader.GetInt32(0);
+                    account.UserId = dataReader.GetInt32(1);
+                    account.AccountNumber = dataReader.GetString(2);
+                    account.Password = dataReader.GetString(3);
+                    account.Balance = dataReader.GetDecimal(4);
+                    account.AccountType = (AccountType)Enum.Parse(typeof(AccountType), dataReader.GetString(5));
+                    account.RegistrationDate = dataReader.GetDateTimeOffset(6);  
                 }
 
-                return userAccounts[userAccounts.Keys.First()];
+                return account;
             }
             finally
             {
@@ -176,8 +153,9 @@ namespace AppBank.Repositories
         }
         #endregion
         #region Atualizar saldo da conta
-        public void UpdateBalance(int id, decimal amount)
+        public int UpdateBalance(int id, decimal amount)
         {
+            int execution = 0;
             try
             {
                 SqlCommand cmd = new SqlCommand();
@@ -189,31 +167,37 @@ namespace AppBank.Repositories
 
                 _connection.Open();
 
-                cmd.ExecuteNonQuery();
+                execution = cmd.ExecuteNonQuery();
             }
             finally
             {
                 _connection.Close();
             }
+
+            return execution;
         }
         #endregion
-        
-        public void DeleteAccount(int accountId)
+        #region Apagar conta
+        public int RemoveAccount(int id)
         {
+            int execution = 0;
             try
             {
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = "DELETE FROM Accounts WHERE AccountId = @id";
-                cmd.Parameters.AddWithValue("@id", accountId);
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.Connection = (SqlConnection) _connection;
 
                 _connection.Open();
-                cmd.ExecuteNonQuery();
+                execution = cmd.ExecuteNonQuery();
             }
             finally
             {
                 _connection.Close();
             }
+
+            return execution;
         }
+        #endregion
     }
 }

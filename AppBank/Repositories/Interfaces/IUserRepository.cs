@@ -9,10 +9,10 @@ namespace AppBank.Repositories.Interfaces
 {
     internal interface IUserReporitory 
     {
-        public void CreateUser(User user);
+        public int UserLoginAutentication(string email, string password);
+        public int CreateUser(User user);
         public User GetUserById(int id);
-        public List<User> GetUsers();
-        public void UpdateUser(User user);
-        public void DeleteUser(int id);
+        public int UpdateUser(User user);
+        public int RemoveUser(int id);
     }
 }
