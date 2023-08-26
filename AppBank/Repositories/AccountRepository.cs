@@ -37,7 +37,7 @@ namespace AppBank.Repositories
                 int accountId = 0;
                 while (dataReader.Read())
                 {
-                    accountId = dataReader.GetInt32("userId");
+                    accountId = dataReader.GetInt32("accountId");
                 }
 
                 if (dataReader != null)

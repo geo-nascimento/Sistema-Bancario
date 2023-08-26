@@ -21,6 +21,7 @@ namespace AppBank.Controllers
         public int LoginAccount(string accountNumber, string password)
         {
             int accountId = _accDb.AccountLoginAutentication(accountNumber, password);
+            
             if (accountId == 0)
             {
                 throw new Exception("Conta não encontrado");
@@ -134,7 +135,7 @@ namespace AppBank.Controllers
             return sucess;
         }
         #endregion
-        #region Excluir uma conta (Não funciona)
+        #region Excluir uma conta
         public int DeleteAccount(int accountId)
         {
             var balance = _accDb.GetBalance(accountId);
